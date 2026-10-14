@@ -9,16 +9,15 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI textoPuntaje;
     public TextMeshProUGUI textoVidas;
 
-    [Header("Configuracion del Juego")]
-    public int puntaje = 0;
+    [Header("Configuración del Juego")]
+    public int coleccionablesRecogidos = 0;
+    public int metaColeccionables = 5; 
     public int vidas = 3;
-    public int metaColeccionables = 5;
 
     [Header("Efectos de Audio")]
-    public AudioSource fuenteDeAudio;
     public AudioClip sonidoColeccionable;
     public AudioClip sonidoGanar;
-    public AudioClip sonidoPerder;
+    public AudioClip sonidoGameOver;
 
     private bool juegoTerminado = false;
 
@@ -37,22 +36,22 @@ public class GameManager : MonoBehaviour
     {
         if (juegoTerminado) return;
 
-        puntaje++;
+        coleccionablesRecogidos++;
         ActualizarHUD();
 
-        if (fuenteDeAudio != null && sonidoColeccionable != null)
+        if (sonidoColeccionable != null)
         {
-            fuenteDeAudio.PlayOneShot(sonidoColeccionable);
+            AudioSource.PlayClipAtPoint(sonidoColeccionable, Camera.main.transform.position);
         }
 
-        if (puntaje >= metaColeccionables)
+        if (coleccionablesRecogidos >= metaColeccionables)
         {
             juegoTerminado = true;
             Debug.Log("¡Ganaste el juego!");
 
-            if (fuenteDeAudio != null && sonidoGanar != null)
+            if (sonidoGanar != null)
             {
-                fuenteDeAudio.PlayOneShot(sonidoGanar);
+                AudioSource.PlayClipAtPoint(sonidoGanar, Camera.main.transform.position);
             }
         }
     }
@@ -69,16 +68,19 @@ public class GameManager : MonoBehaviour
             juegoTerminado = true;
             Debug.Log("Game Over");
 
-            if (fuenteDeAudio != null && sonidoPerder != null)
+            if (sonidoGameOver != null)
             {
-                fuenteDeAudio.PlayOneShot(sonidoPerder);
+                AudioSource.PlayClipAtPoint(sonidoGameOver, Camera.main.transform.position);
             }
         }
     }
 
     void ActualizarHUD()
     {
-        if (textoPuntaje != null) textoPuntaje.text = "Puntaje: " + puntaje + "/" + metaColeccionables;
-        if (textoVidas != null) textoVidas.text = "Vidas: " + vidas;
+        if (textoPuntaje != null) 
+            textoPuntaje.text = "Puntaje: " + coleccionablesRecogidos + "/" + metaColeccionables;
+        
+        if (textoVidas != null) 
+            textoVidas.text = "Vidas: " + vidas;
     }
 }
