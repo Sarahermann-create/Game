@@ -15,9 +15,13 @@ public class GameManager : MonoBehaviour
     public int vidas = 3;
 
     [Header("Efectos de Audio")]
+    public AudioSource fuenteDeAudio; 
     public AudioClip sonidoColeccionable;
     public AudioClip sonidoGanar;
     public AudioClip sonidoGameOver;
+
+    [Header("Referencia del Jugador")]
+    public GameObject jugador; 
 
     private bool juegoTerminado = false;
 
@@ -30,6 +34,11 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         ActualizarHUD();
+
+        if (fuenteDeAudio == null)
+        {
+            fuenteDeAudio = GetComponent<AudioSource>();
+        }
     }
 
     public void RecogerColeccionable()
@@ -39,9 +48,9 @@ public class GameManager : MonoBehaviour
         coleccionablesRecogidos++;
         ActualizarHUD();
 
-        if (sonidoColeccionable != null)
+        if (fuenteDeAudio != null && sonidoColeccionable != null)
         {
-            AudioSource.PlayClipAtPoint(sonidoColeccionable, Camera.main.transform.position);
+            fuenteDeAudio.PlayOneShot(sonidoColeccionable);
         }
 
         if (coleccionablesRecogidos >= metaColeccionables)
@@ -49,13 +58,14 @@ public class GameManager : MonoBehaviour
             juegoTerminado = true;
             Debug.Log("¡Ganaste el juego!");
 
-            if (sonidoGanar != null)
+            if (fuenteDeAudio != null && sonidoGanar != null)
             {
-                AudioSource.PlayClipAtPoint(sonidoGanar, Camera.main.transform.position);
+                fuenteDeAudio.PlayOneShot(sonidoGanar);
             }
         }
     }
 
+    
     public void PerderVida()
     {
         if (juegoTerminado) return;
@@ -66,11 +76,18 @@ public class GameManager : MonoBehaviour
         if (vidas <= 0)
         {
             juegoTerminado = true;
-            Debug.Log("Game Over");
 
-            if (sonidoGameOver != null)
+         
+            Debug.Log("¡GAME OVER! Se acabaron las vidas.");
+
+            if (fuenteDeAudio != null && sonidoGameOver != null)
             {
-                AudioSource.PlayClipAtPoint(sonidoGameOver, Camera.main.transform.position);
+                fuenteDeAudio.PlayOneShot(sonidoGameOver);
+            }
+
+            if (jugador != null)
+            {
+                jugador.SetActive(false);
             }
         }
     }
